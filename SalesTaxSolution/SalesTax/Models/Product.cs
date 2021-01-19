@@ -7,6 +7,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SalesTax.Models
 {
+    public enum ProductCategories
+    {
+        Books,
+        Food,
+        Medical,
+        Beauty,
+        Technology
+    }
     public class Product
     {
         public int Id { get; set; }
@@ -17,5 +25,12 @@ namespace SalesTax.Models
         public bool Imported { get; set; }
         [Column(TypeName = "decimal(18, 2)")]
         public decimal Price { get; set; }
+
+        public ProductCategories ProductCategory { get; set; }
+        public decimal SalesTaxAmount { get; set; }
+        public decimal FinalProductPrice { get; set; }
+
+
     }
+
 }

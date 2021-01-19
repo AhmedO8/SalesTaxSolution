@@ -13,7 +13,6 @@ namespace SalesTax.Controllers
     public class ProductsController : Controller
     {
         private readonly MvcProductContext _context;
-
         public ProductsController(MvcProductContext context)
         {
             _context = context;
@@ -22,7 +21,7 @@ namespace SalesTax.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Product.ToListAsync());
+             return View(await _context.Product.ToListAsync());
         }
 
         // GET: Products/Details/5
@@ -54,13 +53,16 @@ namespace SalesTax.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ProductName,Quantity,Imported,Price")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,ProductName,Quantity,Imported,Price,Categories")] Product product)
         {
+
             if (ModelState.IsValid)
             {
+                product.SalesTaxAmount = CalculateSalesTax(product);
+                product.FinalProductPrice = CalculateFinalPrice(product);
                 _context.Add(product);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                 return RedirectToAction(nameof(Index));
             }
             return View(product);
         }
@@ -86,7 +88,7 @@ namespace SalesTax.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ProductName,Quantity,Imported,Price")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ProductName,Quantity,Imported,Price,Categories")] Product product)
         {
             if (id != product.Id)
             {
@@ -149,5 +151,55 @@ namespace SalesTax.Controllers
         {
             return _context.Product.Any(e => e.Id == id);
         }
+
+        private void CalculateTotals(List<Product> lists)
+        {
+        }
+
+
+        private decimal CalculateFinalPrice(Product product)
+        {
+            var FinalProductPrice = product.SalesTaxAmount + product.Price;
+            return FinalProductPrice;
+        }
+
+        private decimal CalculateSalesTax(Product product)
+        {
+            decimal basicSalesTaxRate = 10;
+            decimal importSalesTaxRate = 5;
+            decimal oneHundred = 100;
+            decimal taxAmount = 0;
+
+            //Scenario 1: Not essential and imported
+            if (!product.ProductCategory.Equals(ProductCategories.Books)
+                   || !product.ProductCategory.Equals(ProductCategories.Food)
+                   || !product.ProductCategory.Equals(ProductCategories.Medical))
+            {
+                if (product.Imported)
+                {
+                    taxAmount = (product.Price * (basicSalesTaxRate + importSalesTaxRate)) / oneHundred;
+                }
+                else
+                {
+                    //Scenario 2: Not essential and not imported
+                    taxAmount = (product.Price * basicSalesTaxRate) / oneHundred;
+                }
+
+            }
+            else
+            {
+                //Scenario 3: Essential and imported
+                taxAmount = (product.Price * importSalesTaxRate) / oneHundred;
+            }
+            taxAmount = RoundUp(taxAmount, 0.05m);
+            return taxAmount;
+        }
+
+        private decimal RoundUp(decimal value, decimal step)
+        {
+            var multiple = Math.Ceiling(value / step);
+            return step * multiple;
+        }
+
     }
 }

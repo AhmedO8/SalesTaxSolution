@@ -22,7 +22,10 @@
                 @Html.DisplayNameFor(model => model.Imported)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Price)
+                @Html.DisplayNameFor(model => model.SalesTaxAmount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FinalProductPrice)
             </th>
             <th></th>
         </tr>
@@ -40,7 +43,10 @@
                 @Html.DisplayFor(modelItem => item.Imported)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Price)
+                @Html.DisplayFor(modelItem => item.SalesTaxAmount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FinalProductPrice)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
@@ -51,3 +57,5 @@
 }
     </tbody>
 </table>
+
+<h2>Totals:</h2>

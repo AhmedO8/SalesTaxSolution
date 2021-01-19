@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SalesTax.Data;
 
 namespace SalesTax.Migrations
 {
     [DbContext(typeof(MvcProductContext))]
-    partial class MvcProductContextModelSnapshot : ModelSnapshot
+    [Migration("20210118145311_AddSalesImportTaxFields")]
+    partial class AddSalesImportTaxFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,7 +27,13 @@ namespace SalesTax.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("Categories")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("FinalProductPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ImportTaxAmount")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("Imported")
@@ -33,9 +41,6 @@ namespace SalesTax.Migrations
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18, 2)");
-
-                    b.Property<int>("ProductCategory")
-                        .HasColumnType("int");
 
                     b.Property<string>("ProductName")
                         .HasColumnType("nvarchar(max)");
