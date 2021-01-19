@@ -169,27 +169,37 @@ namespace SalesTax.Controllers
             decimal importSalesTaxRate = 5;
             decimal oneHundred = 100;
             decimal taxAmount = 0;
+            decimal zero = 0;
 
-            //Scenario 1: Not essential and imported
-            if (!product.ProductCategory.Equals(ProductCategories.Books)
-                   || !product.ProductCategory.Equals(ProductCategories.Food)
-                   || !product.ProductCategory.Equals(ProductCategories.Medical))
+            //Scenario 1: essential and imported
+            if ((product.ProductCategory == ProductCategories.Books)
+                   || (product.ProductCategory == ProductCategories.Food)
+                   || (product.ProductCategory == ProductCategories.Medical))
             {
                 if (product.Imported)
                 {
-                    taxAmount = (product.Price * (basicSalesTaxRate + importSalesTaxRate)) / oneHundred;
+                    //Scenario 2: Essential and imported
+                    taxAmount = (product.Price * importSalesTaxRate) / oneHundred;
                 }
                 else
                 {
-                    //Scenario 2: Not essential and not imported
-                    taxAmount = (product.Price * basicSalesTaxRate) / oneHundred;
+                    //Scenario 3: essential and not imported
+                    taxAmount = zero;
                 }
 
             }
             else
             {
-                //Scenario 3: Essential and imported
-                taxAmount = (product.Price * importSalesTaxRate) / oneHundred;
+                if (product.Imported)
+                {
+                    //Scenario 3: Not Essential and imported
+                    taxAmount = (product.Price * (basicSalesTaxRate + importSalesTaxRate)) / oneHundred;
+                }
+                else
+                {
+                    //Scenario 4: Not essential and not imported
+                    taxAmount = (product.Price * basicSalesTaxRate) / oneHundred;
+                }
             }
             taxAmount = RoundUp(taxAmount, 0.05m);
             return taxAmount;

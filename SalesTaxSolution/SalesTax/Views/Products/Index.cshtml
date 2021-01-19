@@ -7,16 +7,16 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">New Product</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ProductName)
+                @Html.DisplayNameFor(model => model.Quantity)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Quantity)
+                @Html.DisplayNameFor(model => model.ProductName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Imported)
@@ -34,10 +34,10 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.ProductName)
+                @Html.DisplayFor(modelItem => item.Quantity)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Quantity)
+                @Html.DisplayFor(modelItem => item.ProductName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Imported)
@@ -58,4 +58,16 @@
     </tbody>
 </table>
 
-<h2>Totals:</h2>
+
+@foreach (var item in Model)
+{
+    <p>
+        @Html.DisplayFor(modelItem => item.Quantity)
+        @(item.Imported ? "imported" : "")
+        @Html.DisplayFor(modelItem => item.ProductName)
+        @Html.DisplayFor(modelItem => item.FinalProductPrice)
+    </p>
+
+}
+<h3>Sales Taxes:@Model.Sum(products => products.SalesTaxAmount)</h3>
+<h3>Total:@Model.Sum(products => products.FinalProductPrice)</h3>
