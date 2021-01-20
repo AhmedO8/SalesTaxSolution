@@ -4,10 +4,22 @@
     ViewData["Title"] = "Shopping cart";
 }
 
-<p>
 
-    <a asp-action="Create" >New Product</a>
-</p>
+
+<div class="alert alert-primary" role="alert">
+    Begin here by clicking: 
+    <a asp-action="Create">New Product</a>
+</div>
+<div>
+    <h3>Instructions</h3>
+    <ol>
+        <li>Add a new product by clicking on "New Product"</li>
+        <li>Edit the product quantity by clicking on "Edit"</li>
+        <li>View the product details by clicking on "Details"</li>
+        <li>Remove the product from the cart by clicking on "Delete"</li>
+
+    </ol>
+</div></p>
 <table class="table">
     <thead>
         <tr>
@@ -18,55 +30,54 @@
                 @Html.DisplayNameFor(model => model.ProductName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Imported)
+                @Html.DisplayNameFor(model => model.Price)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SalesTaxAmount)
-            </th>
-            <th> 
                 @Html.DisplayNameFor(model => model.FinalProductPrice)
             </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    @(item.Imported ? "imported" : "")
+                    @Html.DisplayFor(modelItem => item.ProductName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FinalProductPrice)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quantity)
+            <td align="right" colspan="3">
+                <b>Sales Taxes: </b>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ProductName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Imported)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SalesTaxAmount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FinalProductPrice)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <b> @Model.Sum(products => products.SalesTaxAmount) </b>
             </td>
         </tr>
-}
+        <tr>
+            <td align="right" colspan="3">
+                <b>Sub Total:</b>
+            </td>
+            <td>
+                <b> @Model.Sum(products => products.FinalProductPrice) </b>
+            </td>
+        </tr>
     </tbody>
 </table>
 
-
-@foreach (var item in Model)
-{
-    <p>
-        @Html.DisplayFor(modelItem => item.Quantity)
-        @(item.Imported ? "imported" : "")
-        @Html.DisplayFor(modelItem => item.ProductName)
-        @Html.DisplayFor(modelItem => item.FinalProductPrice)
-    </p>
-
-}
-<h3>Sales Taxes:@Model.Sum(products => products.SalesTaxAmount)</h3>
-<h3>Total:@Model.Sum(products => products.FinalProductPrice)</h3>
+ 

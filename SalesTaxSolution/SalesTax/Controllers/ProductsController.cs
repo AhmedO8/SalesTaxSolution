@@ -156,9 +156,11 @@ namespace SalesTax.Controllers
 
         private decimal CalculateFinalPrice(Product product)
         {
-            var FinalProductPrice = product.Quantity * (product.SalesTaxAmount + product.Price);
-            return FinalProductPrice;
+            var taxPerItem = product.SalesTaxAmount / product.Quantity;
+            var finalProductPrice = product.Quantity * (taxPerItem + product.Price);
+            return finalProductPrice;
         }
+
 
         private decimal CalculateSalesTax(Product product)
         {
@@ -176,7 +178,7 @@ namespace SalesTax.Controllers
                 if (product.Imported)
                 {
                     //Scenario 2: Essential and imported
-                    taxAmount = product.Quantity * ((product.Price * importSalesTaxRate) / oneHundred);
+                    taxAmount = (product.Price * importSalesTaxRate) / oneHundred;
                 }
                 else
                 {
@@ -190,15 +192,16 @@ namespace SalesTax.Controllers
                 if (product.Imported)
                 {
                     //Scenario 3: Not Essential and imported
-                    taxAmount = product.Quantity * ((product.Price * (basicSalesTaxRate + importSalesTaxRate)) / oneHundred);
+                    taxAmount = (product.Price * (basicSalesTaxRate + importSalesTaxRate)) / oneHundred;
                 }
                 else
                 {
                     //Scenario 4: Not essential and not imported
-                    taxAmount = product.Quantity * ((product.Price * basicSalesTaxRate) / oneHundred);
+                    taxAmount = (product.Price * basicSalesTaxRate) / oneHundred;
                 }
             }
-            taxAmount = RoundUp(taxAmount, 0.05m);
+            taxAmount = product.Quantity * RoundUp(taxAmount, 0.05m);
+
             return taxAmount;
         }
 

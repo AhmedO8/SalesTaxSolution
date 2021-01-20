@@ -23,7 +23,6 @@ namespace SalesTax.Models
         [Required]
         [Display(Name = "Name")]
         public string ProductName { get; set; }
-        [Range(1,20, ErrorMessage = "Purchases are limited to 20 per buyer")]
         [Required]
         public int Quantity { get; set; }
         [Display(Name = "Is this an imported product?")]
@@ -34,11 +33,10 @@ namespace SalesTax.Models
         public decimal Price { get; set; }
         [Display(Name = "Category")]
         [Required]
-        [Range(0, 5, ErrorMessage = "Please select a category")]
         public ProductCategories ProductCategory { get; set; }
         [Display(Name = "Tax")]
         public decimal SalesTaxAmount { get; set; }
-        [Display(Name = "Price")]
+        [Display(Name = "Total")]
         public decimal FinalProductPrice { get; set; }
 
 
