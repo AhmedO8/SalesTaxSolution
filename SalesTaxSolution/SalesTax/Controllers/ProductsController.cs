@@ -53,7 +53,7 @@ namespace SalesTax.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ProductName,Quantity,Imported,Price,Categories")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,ProductName,Quantity,Imported,Price,ProductCategory")] Product product)
         {
 
             if (ModelState.IsValid)
@@ -88,7 +88,7 @@ namespace SalesTax.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ProductName,Quantity,Imported,Price,Categories")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ProductName,Quantity,Imported,Price,ProductCategory")] Product product)
         {
             if (id != product.Id)
             {
@@ -99,6 +99,8 @@ namespace SalesTax.Controllers
             {
                 try
                 {
+                    product.SalesTaxAmount = CalculateSalesTax(product);
+                    product.FinalProductPrice = CalculateFinalPrice(product);
                     _context.Update(product);
                     await _context.SaveChangesAsync();
                 }
@@ -152,14 +154,9 @@ namespace SalesTax.Controllers
             return _context.Product.Any(e => e.Id == id);
         }
 
-        private void CalculateTotals(List<Product> lists)
-        {
-        }
-
-
         private decimal CalculateFinalPrice(Product product)
         {
-            var FinalProductPrice = product.SalesTaxAmount + product.Price;
+            var FinalProductPrice = product.Quantity * (product.SalesTaxAmount + product.Price);
             return FinalProductPrice;
         }
 
@@ -179,7 +176,7 @@ namespace SalesTax.Controllers
                 if (product.Imported)
                 {
                     //Scenario 2: Essential and imported
-                    taxAmount = (product.Price * importSalesTaxRate) / oneHundred;
+                    taxAmount = product.Quantity * ((product.Price * importSalesTaxRate) / oneHundred);
                 }
                 else
                 {
@@ -193,12 +190,12 @@ namespace SalesTax.Controllers
                 if (product.Imported)
                 {
                     //Scenario 3: Not Essential and imported
-                    taxAmount = (product.Price * (basicSalesTaxRate + importSalesTaxRate)) / oneHundred;
+                    taxAmount = product.Quantity * ((product.Price * (basicSalesTaxRate + importSalesTaxRate)) / oneHundred);
                 }
                 else
                 {
                     //Scenario 4: Not essential and not imported
-                    taxAmount = (product.Price * basicSalesTaxRate) / oneHundred;
+                    taxAmount = product.Quantity * ((product.Price * basicSalesTaxRate) / oneHundred);
                 }
             }
             taxAmount = RoundUp(taxAmount, 0.05m);

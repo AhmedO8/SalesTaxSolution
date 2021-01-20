@@ -1,13 +1,12 @@
 ﻿@model IEnumerable<SalesTax.Models.Product>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Shopping cart";
 }
 
-<h1>Index</h1>
-
 <p>
-    <a asp-action="Create">New Product</a>
+
+    <a asp-action="Create" >New Product</a>
 </p>
 <table class="table">
     <thead>
@@ -24,7 +23,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.SalesTaxAmount)
             </th>
-            <th>
+            <th> 
                 @Html.DisplayNameFor(model => model.FinalProductPrice)
             </th>
             <th></th>
